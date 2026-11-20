@@ -1,0 +1,404 @@
+/* ==========================================================================
+   Sistem Informasi Data Mahasiswa
+   Gaya visual mengikuti screenshot referensi: kartu putih, header biru,
+   tabel abu-abu berselang-seling, tombol aksi kuning dan merah.
+   ========================================================================== */
+
+:root {
+    --app-blue: #0d6efd;
+    --app-green: #087a65;
+    --app-yellow: #ffc107;
+    --app-red: #f45145;
+    --app-table-head: #f1f1f1;
+    --app-border: #dee2e6;
+    --app-text: #212529;
+    --app-muted: #6c757d;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #ffffff;
+    color: var(--app-text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+        Arial, "Noto Sans", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Kerangka halaman
+   -------------------------------------------------------------------------- */
+
+.page {
+    padding: 16px;
+}
+
+.app-card {
+    background-color: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.app-card__header {
+    background-color: var(--app-blue);
+    padding: 10px 16px;
+}
+
+.app-card__title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.app-card__body {
+    padding: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Tombol
+   -------------------------------------------------------------------------- */
+
+.btn-app {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: filter 120ms ease-in-out;
+}
+
+.btn-app:hover {
+    filter: brightness(0.92);
+}
+
+.btn-app:focus-visible {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+.btn-app--primary {
+    background-color: var(--app-green);
+    color: #ffffff;
+}
+
+.btn-app--secondary {
+    background-color: #ffffff;
+    border-color: var(--app-border);
+    color: var(--app-text);
+}
+
+.btn-app--edit {
+    background-color: var(--app-yellow);
+    color: var(--app-text);
+}
+
+.btn-app--delete {
+    background-color: var(--app-red);
+    color: #ffffff;
+}
+
+.btn-app--sm {
+    padding: 4px 12px;
+    font-size: 14px;
+}
+
+.toolbar {
+    margin-bottom: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Tabel data
+   -------------------------------------------------------------------------- */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-mahasiswa {
+    width: 100%;
+    min-width: 820px;
+    margin: 0;
+    border: 1px solid var(--app-border);
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table-mahasiswa thead th {
+    background-color: var(--app-table-head);
+    border-bottom: 1px solid var(--app-border);
+    border-right: 1px solid var(--app-border);
+    padding: 8px 12px;
+    color: var(--app-text);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.table-mahasiswa thead th:last-child,
+.table-mahasiswa tbody td:last-child {
+    border-right: 0;
+}
+
+.table-mahasiswa tbody td {
+    border-bottom: 1px solid var(--app-border);
+    border-right: 1px solid var(--app-border);
+    padding: 8px 12px;
+    color: var(--app-text);
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.table-mahasiswa tbody tr:nth-child(even) {
+    background-color: #f6f6f6;
+}
+
+.table-mahasiswa tbody tr:hover {
+    background-color: #eef4ff;
+}
+
+.col-no {
+    width: 64px;
+    text-align: left;
+}
+
+.col-nim {
+    width: 104px;
+    white-space: nowrap;
+}
+
+.col-aksi {
+    width: 184px;
+    white-space: nowrap;
+}
+
+.cell-aksi {
+    display: flex;
+    gap: 8px;
+}
+
+.cell-aksi form {
+    margin: 0;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Empty state & alert
+   -------------------------------------------------------------------------- */
+
+.empty-state {
+    border: 1px solid var(--app-border);
+    border-radius: 3px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.empty-state__text {
+    margin: 0 0 16px;
+    color: var(--app-muted);
+    font-size: 14px;
+}
+
+.app-alert {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+.app-alert--success {
+    background-color: #d1e7dd;
+    border-color: #a3cfbb;
+    color: #0f5132;
+}
+
+.app-alert--danger {
+    background-color: #f8d7da;
+    border-color: #f1aeb5;
+    color: #842029;
+}
+
+/* --------------------------------------------------------------------------
+   Form
+   -------------------------------------------------------------------------- */
+
+.form-field {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-text);
+}
+
+.form-control-app {
+    display: block;
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: var(--app-text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.form-control-app:focus {
+    outline: 0;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+.form-control-app.is-invalid {
+    border-color: var(--app-red);
+}
+
+textarea.form-control-app {
+    min-height: 84px;
+    resize: vertical;
+}
+
+.form-error {
+    display: block;
+    margin-top: 4px;
+    color: #c0392b;
+    font-size: 13px;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--app-border);
+}
+
+.form-help {
+    display: block;
+    margin-top: 4px;
+    color: var(--app-muted);
+    font-size: 13px;
+}
+
+.required-mark {
+    color: #c0392b;
+}
+
+/* --------------------------------------------------------------------------
+   Dialog konfirmasi hapus
+   -------------------------------------------------------------------------- */
+
+.confirm-body {
+    font-size: 14px;
+}
+
+.confirm-summary {
+    border: 1px solid var(--app-border);
+    border-radius: 3px;
+    margin: 16px 0;
+}
+
+.confirm-summary__row {
+    display: flex;
+    border-bottom: 1px solid var(--app-border);
+    font-size: 14px;
+}
+
+.confirm-summary__row:last-child {
+    border-bottom: 0;
+}
+
+.confirm-summary__label {
+    flex: 0 0 130px;
+    background-color: var(--app-table-head);
+    padding: 8px 12px;
+    font-weight: 600;
+}
+
+.confirm-summary__value {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+    word-break: break-word;
+}
+
+.confirm-warning {
+    color: #842029;
+    font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsif
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767.98px) {
+    .page {
+        padding: 8px;
+    }
+
+    .app-card__body {
+        padding: 12px;
+    }
+
+    .toolbar .btn-app {
+        display: block;
+        width: 100%;
+    }
+
+    .confirm-summary__row {
+        flex-direction: column;
+    }
+
+    .confirm-summary__label {
+        flex: 1 1 auto;
+    }
+
+    .form-actions .btn-app {
+        flex: 1 1 140px;
+    }
+}
+
+@media print {
+    .toolbar,
+    .cell-aksi {
+        display: none;
+    }
+}

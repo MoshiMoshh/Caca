@@ -1,0 +1,9 @@
+# Archive & deploy helper files
+*.zip
+deploy_ftp.ps1
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,9 @@
+# Blokir akses langsung ke berkas yang bukan bagian dari antarmuka aplikasi.
+<FilesMatch "\.(sql|md|log)$">
+    Require all denied
+</FilesMatch>
+
+# Direktori includes hanya berisi fragmen layout, tidak boleh diakses langsung.
+RedirectMatch 403 ^/.*/includes/.*
+
+DirectoryIndex index.php
