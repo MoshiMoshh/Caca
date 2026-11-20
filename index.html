@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Data Mahasiswa &middot; Sistem Informasi Data Mahasiswa</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Tambahan modal/overlay untuk interaksi SPA di GitHub Pages */
+        .modal-backdrop-app {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            padding: 16px;
+        }
+        .modal-app {
+            background: #ffffff;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            overflow: hidden;
+            border: 1px solid var(--app-border);
+        }
+        .modal-app__header {
+            background-color: var(--app-blue);
+            color: #ffffff;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-app__header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .modal-app__close {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-app__body {
+            padding: 16px;
+        }
+        .badge-live {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            vertical-align: middle;
+            border: 1px solid #c8e6c9;
+        }
+        .reset-link {
+            font-size: 12px;
+            color: #6c757d;
+            text-decoration: underline;
+            cursor: pointer;
+            float: right;
+            margin-top: 8px;
+        }
+        .reset-link:hover {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <div class="app-card">
+        <div class="app-card__header">
+            <h1 class="app-card__title">
+                Data Mahasiswa
+                <span class="badge-live">GitHub Pages &bull; Live Online</span>
+            </h1>
+        </div>
+        <div class="app-card__body">
+            <!-- Alert Notifikasi -->
+            <div id="alertBox" class="app-alert app-alert--success" style="display: none;" role="alert">
+                <span id="alertMessage"></span>
+            </div>
+
+            <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn-app btn-app--primary" id="btnTambahData">Tambah Data</button>
+                <span class="reset-link" id="btnResetData" title="Kembalikan 4 data mahasiswa awal">Reset Data Contoh</span>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <p class="empty-state__text">
+                    Belum ada data mahasiswa. Klik tombol Tambah Data untuk menambahkan data pertama.
+                </p>
+            </div>
+
+            <!-- Tabel Data -->
+            <div id="tableWrapper" class="table-wrapper">
+                <table class="table-mahasiswa">
+                    <caption class="visually-hidden">Daftar data mahasiswa</caption>
+                    <thead>
+                        <tr>
+                            <th class="col-no" scope="col">No.</th>
+                            <th class="col-nim" scope="col">NIM</th>
+                            <th scope="col">Nama Lengkap</th>
+                            <th scope="col">Alamat</th>
+                            <th scope="col">Prodi</th>
+                            <th class="col-aksi" scope="col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Diisi via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal Form Tambah / Ubah -->
+<div id="formModal" class="modal-backdrop-app" style="display: none;">
+    <div class="modal-app">
+        <div class="modal-app__header">
+            <h2 id="modalTitle">Tambah Data Mahasiswa</h2>
+            <button type="button" class="modal-app__close" id="btnModalClose">&times;</button>
+        </div>
+        <div class="modal-app__body">
+            <form id="formMahasiswa" novalidate>
+                <input type="hidden" id="inputId" value="">
+                
+                <div class="form-field">
+                    <label class="form-label" for="inputNim">NIM <span class="required-mark">*</span></label>
+                    <input type="text" id="inputNim" class="form-control-app" maxlength="20" placeholder="Contoh: 20.51.001" required>
+                    <span class="form-error" id="errorNim" style="display: none;"></span>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="inputNama">Nama Lengkap <span class="required-mark">*</span></label>
+                    <input type="text" id="inputNama" class="form-control-app" maxlength="100" placeholder="Nama lengkap mahasiswa" required>
+                    <span class="form-error" id="errorNama" style="display: none;"></span>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="inputAlamat">Alamat <span class="required-mark">*</span></label>
+                    <textarea id="inputAlamat" class="form-control-app" placeholder="Alamat domisili mahasiswa" required></textarea>
+                    <span class="form-error" id="errorAlamat" style="display: none;"></span>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="inputProdi">Program Studi <span class="required-mark">*</span></label>
+                    <input type="text" id="inputProdi" class="form-control-app" maxlength="100" placeholder="Contoh: S1 - Teknik Informatika" required>
+                    <span class="form-error" id="errorProdi" style="display: none;"></span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-app btn-app--primary">Simpan</button>
+                    <button type="button" class="btn-app btn-app--secondary" id="btnBatal">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer style="text-align: center; font-size: 13px; color: #6c757d; padding: 20px 16px;">
+    &copy; 2026 Sistem Informasi Data Mahasiswa &middot; Berjalan di GitHub Pages
+</footer>
+
+<script>
+(function() {
+    'use strict';
+
+    const STORAGE_KEY = 'caca_data_mahasiswa';
+    const DEFAULT_DATA = [
+        { id: 1, nim: '20.51.001', nama: 'Muhammad Baba', alamat: 'Tarakan, Kalimantan Utara', prodi: 'S1 - Teknik Informatika' },
+        { id: 2, nim: '10.51.002', nama: 'Syahida Arsyma', alamat: 'Juata Laut', prodi: 'S1 - Teknik Informatika' },
+        { id: 3, nim: '10.50.001', nama: 'Muhammad Uwais Al Qarni', alamat: 'Tarakan, Kalimantan Utara', prodi: 'S1 - Sistem Informasi' },
+        { id: 4, nim: '10.50.013', nama: 'Muhammad Hafid', alamat: 'Tarakan', prodi: 'S1 - Sistem Informasi' }
+    ];
+
+    function getData() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                saveData(DEFAULT_DATA);
+                return DEFAULT_DATA.slice();
+            }
+            return JSON.parse(raw);
+        } catch (e) {
+            return DEFAULT_DATA.slice();
+        }
+    }
+
+    function saveData(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showAlert(type, message) {
+        const alertBox = document.getElementById('alertBox');
+        const alertMessage = document.getElementById('alertMessage');
+        alertBox.className = 'app-alert app-alert--' + type;
+        alertMessage.textContent = message;
+        alertBox.style.display = 'block';
+
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 3500);
+    }
+
+    function renderTable() {
+        const data = getData();
+        const tbody = document.getElementById('tableBody');
+        const tableWrapper = document.getElementById('tableWrapper');
+        const emptyState = document.getElementById('emptyState');
+
+        if (data.length === 0) {
+            tableWrapper.style.display = 'none';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        tableWrapper.style.display = 'block';
+        emptyState.style.display = 'none';
+
+        tbody.innerHTML = data.map((item, index) => `
+            <tr>
+                <td class="col-no">${index + 1}</td>
+                <td class="col-nim">${escapeHtml(item.nim)}</td>
+                <td>${escapeHtml(item.nama)}</td>
+                <td>${escapeHtml(item.alamat)}</td>
+                <td>${escapeHtml(item.prodi)}</td>
+                <td class="col-aksi">
+                    <div class="cell-aksi">
+                        <button type="button" class="btn-app btn-app--edit btn-app--sm btn-edit" data-id="${item.id}">Ubah</button>
+                        <button type="button" class="btn-app btn-app--delete btn-app--sm btn-delete" data-id="${item.id}" data-nama="${escapeHtml(item.nama)}" data-nim="${escapeHtml(item.nim)}">Hapus</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        // Attach event listeners
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.id, 10)));
+        });
+
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => deleteData(parseInt(btn.dataset.id, 10), btn.dataset.nama, btn.dataset.nim));
+        });
+    }
+
+    const formModal = document.getElementById('formModal');
+    const formMahasiswa = document.getElementById('formMahasiswa');
+    const modalTitle = document.getElementById('modalTitle');
+    const inputId = document.getElementById('inputId');
+    const inputNim = document.getElementById('inputNim');
+    const inputNama = document.getElementById('inputNama');
+    const inputAlamat = document.getElementById('inputAlamat');
+    const inputProdi = document.getElementById('inputProdi');
+
+    function resetErrors() {
+        ['errorNim', 'errorNama', 'errorAlamat', 'errorProdi'].forEach(id => {
+            const el = document.getElementById(id);
+            el.textContent = '';
+            el.style.display = 'none';
+        });
+        document.querySelectorAll('.form-control-app').forEach(el => el.classList.remove('is-invalid'));
+    }
+
+    function openAddModal() {
+        modalTitle.textContent = 'Tambah Data Mahasiswa';
+        inputId.value = '';
+        inputNim.value = '';
+        inputNama.value = '';
+        inputAlamat.value = '';
+        inputProdi.value = '';
+        resetErrors();
+        formModal.style.display = 'flex';
+        inputNim.focus();
+    }
+
+    function openEditModal(id) {
+        const data = getData();
+        const item = data.find(d => d.id === id);
+        if (!item) return;
+
+        modalTitle.textContent = 'Ubah Data Mahasiswa';
+        inputId.value = item.id;
+        inputNim.value = item.nim;
+        inputNama.value = item.nama;
+        inputAlamat.value = item.alamat;
+        inputProdi.value = item.prodi;
+        resetErrors();
+        formModal.style.display = 'flex';
+        inputNama.focus();
+    }
+
+    function closeModal() {
+        formModal.style.display = 'none';
+    }
+
+    function deleteData(id, nama, nim) {
+        const confirmMsg = `Hapus data mahasiswa "${nama}" (NIM ${nim})?`;
+        if (confirm(confirmMsg)) {
+            let data = getData();
+            data = data.filter(d => d.id !== id);
+            saveData(data);
+            renderTable();
+            showAlert('success', `Data mahasiswa "${nama}" berhasil dihapus.`);
+        }
+    }
+
+    formMahasiswa.addEventListener('submit', function(e) {
+        e.preventDefault();
+        resetErrors();
+
+        const id = inputId.value ? parseInt(inputId.value, 10) : null;
+        const nim = inputNim.value.trim();
+        const nama = inputNama.value.trim();
+        const alamat = inputAlamat.value.trim();
+        const prodi = inputProdi.value.trim();
+
+        let hasError = false;
+
+        if (!nim) {
+            document.getElementById('errorNim').textContent = 'NIM wajib diisi.';
+            document.getElementById('errorNim').style.display = 'block';
+            inputNim.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        // Check unique NIM
+        const data = getData();
+        const duplicate = data.find(d => d.nim.toLowerCase() === nim.toLowerCase() && d.id !== id);
+        if (duplicate) {
+            document.getElementById('errorNim').textContent = 'NIM tersebut sudah terdaftar. Gunakan NIM lain.';
+            document.getElementById('errorNim').style.display = 'block';
+            inputNim.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (!nama) {
+            document.getElementById('errorNama').textContent = 'Nama Lengkap wajib diisi.';
+            document.getElementById('errorNama').style.display = 'block';
+            inputNama.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (!alamat) {
+            document.getElementById('errorAlamat').textContent = 'Alamat wajib diisi.';
+            document.getElementById('errorAlamat').style.display = 'block';
+            inputAlamat.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (!prodi) {
+            document.getElementById('errorProdi').textContent = 'Program Studi wajib diisi.';
+            document.getElementById('errorProdi').style.display = 'block';
+            inputProdi.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        if (id) {
+            // Update
+            const index = data.findIndex(d => d.id === id);
+            if (index !== -1) {
+                data[index] = { id, nim, nama, alamat, prodi };
+                saveData(data);
+                showAlert('success', 'Data mahasiswa berhasil diperbarui.');
+            }
+        } else {
+            // Create
+            const nextId = data.reduce((max, item) => item.id > max ? item.id : max, 0) + 1;
+            data.push({ id: nextId, nim, nama, alamat, prodi });
+            saveData(data);
+            showAlert('success', 'Data mahasiswa berhasil ditambahkan.');
+        }
+
+        closeModal();
+        renderTable();
+    });
+
+    document.getElementById('btnTambahData').addEventListener('click', openAddModal);
+    document.getElementById('btnModalClose').addEventListener('click', closeModal);
+    document.getElementById('btnBatal').addEventListener('click', closeModal);
+
+    document.getElementById('btnResetData').addEventListener('click', function() {
+        if (confirm('Kembalikan data tabel ke 4 data contoh awal?')) {
+            saveData(DEFAULT_DATA);
+            renderTable();
+            showAlert('success', 'Data telah di-reset ke 4 data contoh awal.');
+        }
+    });
+
+    // Close on click outside modal
+    formModal.addEventListener('click', function(e) {
+        if (e.target === formModal) closeModal();
+    });
+
+    // Initial render
+    renderTable();
+})();
+</script>
+</body>
+</html>
